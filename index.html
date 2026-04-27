@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link rel="stylesheet" href="style.css">
+
+    <title>Document</title>
+</head>
+<body>
+    <div id="div1">
+        <input type="text" placeholder="enter product name" id="title">
+    </div>
+    <div id="div2">
+      <input type="number" id="count" placeholder="count">
+        <input type="number" id="price" placeholder="price">
+        <input type="number" id="ads" placeholder="ads">
+        <input type="number" id="taxes" placeholder="taxes">
+        <input type="number" id="discount" placeholder="discount">
+        
+        <div id="total"></div>
+        <div onclick="add()" id="add-product">Add Product</div>
+        <div id="table">
+            <table id="productTable">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>count</th>
+      <th>Price</th>
+      <th>Taxes</th>
+      <th>Ads</th>
+      <th>Discount</th>
+      <th>Total</th>
+      <th>action</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody">
+    <!-- الصفوف ستُضاف هنا -->
+  </tbody>
+</table>
+
+        </div>
+
+         
+    </div>
+   
+    <script src="main.js"></script>
+    
+</body>
+</html>
