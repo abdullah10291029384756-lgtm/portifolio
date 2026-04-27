@@ -14,7 +14,7 @@ window.onload = function() {
     renderTable();
 };
 
-// دالة لحساب التوتال
+
 function Total() {
     return (+price.value || 0) + (+taxes.value || 0) + (+ads.value || 0) - (+discount.value || 0);
 }

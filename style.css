@@ -1,6 +1,5 @@
-/* style.css */
 
-/* خلفية عامة وخط */
+
 body {
   font-family: Arial, sans-serif;
   background: #f4f6f9;
@@ -54,7 +53,7 @@ button:nth-of-type(3) {
   color: white;
 }
 
-/* صندوق التوتال */
+
 #total {
   margin: 10px 0;
   font-size: 18px;
@@ -62,7 +61,6 @@ button:nth-of-type(3) {
   color: #007bff;
 }
 
-/* تنسيق الجدول */
 table {
   width: 100%;
   border-collapse: collapse;
