@@ -1,101 +1,143 @@
+const username = document.getElementById("username");
+const email = document.getElementById("email");
+const loginUserName = document.getElementById("loginUsername");
+const loginEmail = document.getElementById("loginEmail");
+const div3 = document.getElementById("div3");
+const comment = document.getElementById("comment");
+const Dev = document.getElementById("Dev");
 
-const title = document.getElementById("title");
-const price = document.getElementById("price");
-const ads = document.getElementById("ads");
-const taxes = document.getElementById("taxes");
-const discount = document.getElementById("discount");
-const total = document.getElementById("total");
-const count = document.getElementById("count");
+let arr = JSON.parse(localStorage.getItem("newUser")) || [];
+const msi = JSON.parse(localStorage.getItem("message")) || [];
 
-
-let arr = JSON.parse(localStorage.getItem("product")) || [];
-
-window.onload = function() {
-    renderTable();
-};
-
-
-function Total() {
-    return (+price.value || 0) + (+taxes.value || 0) + (+ads.value || 0) - (+discount.value || 0);
-}
-
-function add() {
-    if (
-        title.value === "" || 
-        price.value === "" || 
-        taxes.value === "" || 
-        discount.value === "" || 
-        ads.value === ""|| 
-        count.value===""
-    ) {
+function signup() {
+    if (username.value.trim() === "" || email.value.trim() === "") {
         alert("You must enter something");
         return;
     }
-  
-    const product = {
-        title: title.value,
-        price: +price.value || 0,
-        taxes: +taxes.value || 0,
-        ads: +ads.value || 0,
-        discount: +discount.value || 0,
-        count:+count.value,
-        total: Total()
+
+    const newUser = {
+        userName: username.value.trim(),
+        email: email.value.trim()
     };
-    
-    arr.push(product);
-    localStorage.setItem("product", JSON.stringify(arr));
 
-    total.innerHTML = `<p>Total: ${Total()}</p>`;
-    renderTable();
+    arr.push(newUser);
+    localStorage.setItem("newUser", JSON.stringify(arr));
 
-    // تفريغ الحقول
-    title.value = "";
-    price.value = "";
-    taxes.value = "";
-    discount.value = "";
-    ads.value = "";
-    count.value ="";
+    username.value = "";
+    email.value = "";
+    alert("Signup successful! You can now login.");
 }
 
-function deleteProduct(i){
-    arr.splice(i,1);
-    localStorage.setItem("product",JSON.stringify(arr));
-    renderTable();
+// تسجيل الدخول
+function login() {
+    if (loginUserName.value.trim() === "" || loginEmail.value.trim() === "") {
+        alert("You must enter something");
+        return;
+    }
+
+    const foundUser = arr.find(user =>
+        user.userName === loginUserName.value.trim() &&
+        user.email === loginEmail.value.trim()
+    );
+
+    if (!foundUser) {
+        div3.innerHTML = '<p style="color:red;">Invalid credentials</p>';
+    } else {
+        div3.innerHTML = `<p style="color:green;">Welcome, ${foundUser.userName}</p>`;
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("currentUser", foundUser.userName);
+
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 1000);
+    }
+
+    loginUserName.value = "";
+    loginEmail.value = "";
 }
 
-function editProduct(index) {
-    title.value = arr[index].title;
-    price.value = arr[index].price;
-    taxes.value = arr[index].taxes;
-    count.value = arr[index].count;
-
-    ads.value = arr[index].ads;
-    discount.value = arr[index].discount;
-    total.innerHTML = `<p>Total: ${Total()}</p>`;
-    arr.splice(index,1)
+function logout() {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("currentUser");
+    window.location.href = "signin.html";
 }
 
-function renderTable() {
-    const tableBody = document.getElementById("tableBody");
-    tableBody.innerHTML = "";
+function checkLogin() {
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "signin.html";
+    } else {
+        const user = localStorage.getItem("currentUser");
+        document.body.insertAdjacentHTML("afterbegin", 
+            `<p>Logged in as: ${user}</p><button onclick="logout()">Logout</button>`);
+    }
+}
 
-    arr.forEach((product, index) => {
-        const row = `
-            <tr>
-                <td>${product.title}</td>
-                <td>${product.count}</td>
+function send() { 
+    if (comment.value.trim() === "") {
+        alert("You must enter a comment");
+        return;
+    }
 
-                <td>${product.price}</td>
-                <td>${product.taxes}</td>
-                <td>${product.ads}</td>
-                <td>${product.discount}</td>
-                <td>${product.total}</td>
-                <td>
-                  <button onclick="deleteProduct(${index})">delete</button>
-                  <button onclick="editProduct(${index})">edit</button>
-                </td>
-            </tr>
+    const currentUser = localStorage.getItem("currentUser");
+    if (!currentUser) {
+        alert("You must be logged in to comment");
+        return;
+    }
+
+    const message = {
+        comment: comment.value.trim(),
+        sender: currentUser
+    };
+
+    msi.push(message);
+    localStorage.setItem("message", JSON.stringify(msi));
+
+    renderMessages();
+
+    comment.value = "";
+}
+
+function renderMessages() {
+    Dev.innerHTML = "<ul>";
+    msi.forEach((msg, i) => {
+        Dev.innerHTML += `
+            <li>
+                <img src="images/istockphoto-1495088043-612x612.jpg" id="imgUser" alt="avatar">
+                <strong>${msg.sender}</strong>: ${msg.comment}
+                ${msg.sender === localStorage.getItem("currentUser") 
+                    ? `<button onclick="deletemessage(${i})">Delete</button>` 
+                    : ""}
+            </li>
         `;
-        tableBody.innerHTML += row;
     });
+    Dev.innerHTML += "</ul>";
 }
+
+function deletemessage(i) {
+    const currentUser = localStorage.getItem("currentUser");
+    if (msi[i].sender !== currentUser) {
+        alert("You can only delete your own comments");
+        return;
+    }
+
+    msi.splice(i, 1);
+    localStorage.setItem("message", JSON.stringify(msi));
+    renderMessages();
+}
+// إظهار الزر عند النزول لأسفل
+window.onscroll = function() {
+  const btn = document.getElementById("scrollTopBtn");
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+};
+
+// عند الضغط على الزر يرجع لأعلى الصفحة
+document.getElementById("scrollTopBtn").onclick = function() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+
+window.onload = renderMessages;
